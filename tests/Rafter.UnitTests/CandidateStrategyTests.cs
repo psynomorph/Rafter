@@ -11,7 +11,7 @@ using Rafter.UnitTests.Extensions;
 namespace Rafter.UnitTests;
 
 [TestFixture]
-public class RaftElectionTests
+public class CandidateStrategyTests
 {
     [Test]
     public async Task Win_election_with_full_quorum_success()
@@ -42,11 +42,11 @@ public class RaftElectionTests
         storage.UpdatePeers(peers);
         storage.SetCurrentPeerId(peers[0].PeerId);
 
-        var electionStrategy = new RaftElectionStrategy(
+        var electionStrategy = new CandidateStrategy(
             logStorage: MockLogStorage(entries),
             raftTransport: transport,
             peersStorage: storage,
-            logger: new NullLoggerFactory().CreateLogger<RaftElectionStrategy>(),
+            logger: new NullLoggerFactory().CreateLogger<CandidateStrategy>(),
             state: state,
             options: MockOptions(new RaftOptions() { ElectionRoundDuration = TimeSpan.FromMinutes(10) }));
 
@@ -90,11 +90,11 @@ public class RaftElectionTests
         storage.UpdatePeers(peers);
         storage.SetCurrentPeerId(peers[0].PeerId);
 
-        var electionStrategy = new RaftElectionStrategy(
+        var electionStrategy = new CandidateStrategy(
             logStorage: MockLogStorage(entries),
             raftTransport: transport,
             peersStorage: storage,
-            logger: new NullLoggerFactory().CreateLogger<RaftElectionStrategy>(),
+            logger: new NullLoggerFactory().CreateLogger<CandidateStrategy>(),
             state: state,
             options: MockOptions(new RaftOptions() { ElectionRoundDuration = TimeSpan.FromMinutes(10) }));
 
@@ -146,11 +146,11 @@ public class RaftElectionTests
         storage.UpdatePeers(peers);
         storage.SetCurrentPeerId(peers[0].PeerId);
 
-        var electionStrategy = new RaftElectionStrategy(
+        var electionStrategy = new CandidateStrategy(
             logStorage: MockLogStorage(entries),
             raftTransport: transport,
             peersStorage: storage,
-            logger: new NullLoggerFactory().CreateLogger<RaftElectionStrategy>(),
+            logger: new NullLoggerFactory().CreateLogger<CandidateStrategy>(),
             state: state,
             options: MockOptions(new RaftOptions() 
             { 
@@ -196,11 +196,11 @@ public class RaftElectionTests
         storage.UpdatePeers(peers);
         storage.SetCurrentPeerId(peers[0].PeerId);
 
-        var electionStrategy = new RaftElectionStrategy(
+        var electionStrategy = new CandidateStrategy(
             logStorage: MockLogStorage(entries),
             raftTransport: transport,
             peersStorage: storage,
-            logger: new NullLoggerFactory().CreateLogger<RaftElectionStrategy>(),
+            logger: new NullLoggerFactory().CreateLogger<CandidateStrategy>(),
             state: state,
             options: MockOptions(new RaftOptions() { ElectionRoundDuration = TimeSpan.FromMinutes(10) }));
 
@@ -243,11 +243,11 @@ public class RaftElectionTests
         storage.UpdatePeers(peers);
         storage.SetCurrentPeerId(peers[0].PeerId);
 
-        var electionStrategy = new RaftElectionStrategy(
+        var electionStrategy = new CandidateStrategy(
             logStorage: MockLogStorage(entries),
             raftTransport: transport,
             peersStorage: storage,
-            logger: new NullLoggerFactory().CreateLogger<RaftElectionStrategy>(),
+            logger: new NullLoggerFactory().CreateLogger<CandidateStrategy>(),
             state: state,
             options: MockOptions(new RaftOptions() { ElectionRoundDuration = TimeSpan.FromMinutes(10) }));
 
@@ -297,11 +297,11 @@ public class RaftElectionTests
         storage.UpdatePeers(peers);
         storage.SetCurrentPeerId(peers[0].PeerId);
 
-        var electionStrategy = new RaftElectionStrategy(
+        var electionStrategy = new CandidateStrategy(
             logStorage: MockLogStorage(entries),
             raftTransport: transport,
             peersStorage: storage,
-            logger: new NullLoggerFactory().CreateLogger<RaftElectionStrategy>(),
+            logger: new NullLoggerFactory().CreateLogger<CandidateStrategy>(),
             state: state,
             options: MockOptions(new RaftOptions() 
             { 
@@ -318,6 +318,109 @@ public class RaftElectionTests
         // Assert
         state.CurrentRole.Should().Be(PeerRole.Candidate);
         state.CurrentTerm.Should().Be(term.Next());
+    }
+
+    [Test]
+    public async Task Becomes_follower_after_receiving_message_with_greather_term()
+    {
+        // Arrange
+        var peers = new[]
+        {
+            new PeerInfo(1, new Uri("http://10.0.0.1"), true),
+            new PeerInfo(2, new Uri("http://10.0.0.2"), true),
+            new PeerInfo(3, new Uri("http://10.0.0.3"), true),
+            new PeerInfo(4, new Uri("http://10.0.0.4"), true),
+        };
+
+        var entries = new[]
+        {
+            new LogEntry(new LogMeta(1, 1), 0, Array.Empty<byte>()),
+            new LogEntry(new LogMeta(1, 2), 0, Array.Empty<byte>()),
+            new LogEntry(new LogMeta(2, 3), 0, Array.Empty<byte>()),
+        };
+
+        var term = new Term(2);
+
+        var transport = new TransportMock(
+            (2, new VoteResponse(term.Next(), 2, true, entries[^1].Meta.LastLogIndex, 1)),
+            (3, new VoteResponse(term.Next(), 2, true, entries[^1].Meta.LastLogIndex, 1)),
+            (4, new VoteResponse(term.Next().Next(), 3, false, entries[^1].Meta.LastLogIndex, 1)));
+
+        var state = new RaftSmState(peers[0].PeerId, term, PeerRole.Candidate);
+        var storage = new PeersStorage();
+        storage.UpdatePeers(peers);
+        storage.SetCurrentPeerId(peers[0].PeerId);
+
+        var electionStrategy = new CandidateStrategy(
+            logStorage: MockLogStorage(entries),
+            raftTransport: transport,
+            peersStorage: storage,
+            logger: new NullLoggerFactory().CreateLogger<CandidateStrategy>(),
+            state: state,
+            options: MockOptions(new RaftOptions() { ElectionRoundDuration = TimeSpan.FromMinutes(10) }));
+
+        // Act
+        await electionStrategy.RunAsync(CancellationToken.None);
+
+        // Assert
+        state.CurrentRole.Should().Be(PeerRole.Follower);
+        state.CurrentTerm.Should().Be(term.Next().Next());
+    }
+
+    [Test]
+    public async Task Cancel_ellection_after_state_changing_durung_election()
+    {
+        // Arrange
+        var peers = new[]
+        {
+            new PeerInfo(1, new Uri("http://10.0.0.1"), true),
+            new PeerInfo(2, new Uri("http://10.0.0.2"), true),
+            new PeerInfo(3, new Uri("http://10.0.0.3"), true),
+            new PeerInfo(4, new Uri("http://10.0.0.4"), true),
+        };
+
+        var entries = new[]
+        {
+            new LogEntry(new LogMeta(1, 1), 0, Array.Empty<byte>()),
+            new LogEntry(new LogMeta(1, 2), 0, Array.Empty<byte>()),
+            new LogEntry(new LogMeta(2, 3), 0, Array.Empty<byte>())
+        };
+
+        var term = new Term(2);
+
+        var transport = new TransportMock(
+            (2, new VoteResponse(term.Next(), 2, true, entries[^1].Meta.LastLogIndex, 1)),
+            (3, new VoteResponse(term.Next(), 3, false, entries[^1].Meta.LastLogIndex, 2)),
+            (4, new VoteResponse(term.Next(), 4, true, entries[^1].Meta.LastLogIndex, 2)))
+        {
+            Delay = TimeSpan.FromSeconds(0.2)
+        };
+
+        var state = new RaftSmState(peers[0].PeerId, term, PeerRole.Candidate);
+        var storage = new PeersStorage();
+        storage.UpdatePeers(peers);
+        storage.SetCurrentPeerId(peers[0].PeerId);
+
+        var electionStrategy = new CandidateStrategy(
+            logStorage: MockLogStorage(entries),
+            raftTransport: transport,
+            peersStorage: storage,
+            logger: new NullLoggerFactory().CreateLogger<CandidateStrategy>(),
+            state: state,
+            options: MockOptions(new RaftOptions()
+            {
+                ElectionRoundDuration = TimeSpan.FromSeconds(30)
+            }));
+
+        // Act
+        var task = electionStrategy.RunAsync(CancellationToken.None);
+        await Task.Delay(TimeSpan.FromSeconds(0.05));
+        state.BecomeFollower(term.Next().Next(), 3);
+        await task;
+
+        // Assert
+        state.CurrentRole.Should().Be(PeerRole.Follower);
+        state.CurrentTerm.Should().Be(term.Next().Next());
     }
 
     private static IRaftLogStorage MockLogStorage(LogEntry[] entries)

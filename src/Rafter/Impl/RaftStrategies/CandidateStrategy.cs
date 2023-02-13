@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Rafter.Impl.RaftStrategies;
 
-internal class RaftElectionStrategy : IRaftStrategy
+internal class CandidateStrategy : IRaftStrategy
 {
     private readonly IRaftLogStorage _logStorage;
     private readonly IRaftTransport _raftTransport;
@@ -22,7 +22,7 @@ internal class RaftElectionStrategy : IRaftStrategy
     private readonly IOptions<RaftOptions> _options;
     private readonly RaftSmState _state;
 
-    public RaftElectionStrategy(
+    public CandidateStrategy(
         IRaftLogStorage logStorage,
         IRaftTransport raftTransport,
         PeersStorage peersStorage,
