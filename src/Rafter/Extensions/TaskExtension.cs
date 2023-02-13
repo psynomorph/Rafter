@@ -41,7 +41,7 @@ internal static class TaskExtension
                 completionSource.TrySetResult(task.Result);
                 break;
             case TaskStatus.Faulted:
-                completionSource.TrySetException(task.Exception.InnerExceptions);
+                completionSource.TrySetException(task.Exception!.InnerExceptions);
                 break;
             case TaskStatus.Canceled:
                 completionSource.TrySetCanceled();
@@ -62,7 +62,7 @@ internal static class TaskExtension
                     completionSource.TrySetResult(ValueTuple.Create(task.Result, value));
                     break;
                 case TaskStatus.Faulted:
-                    completionSource.TrySetException(task.Exception.InnerExceptions);
+                    completionSource.TrySetException(task.Exception!.InnerExceptions);
                     break;
                 case TaskStatus.Canceled:
                     completionSource.TrySetCanceled();

@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Rafter\Rafter.csproj" />
+    <ProjectReference Include="..\..\src\Rafter\Rafter.csproj" />
   </ItemGroup>
 
 </Project>

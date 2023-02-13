@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5E5D3AC0-D0B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{48EBD200-8D8A-46BF-BF5B-607906499956}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rafter.UnitTests", "Rafter.UnitTests\Rafter.UnitTests.csproj", "{E698ECC6-F1F8-424F-8286-2C8B87DEB696}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rafter.UnitTests", "tests\Rafter.UnitTests\Rafter.UnitTests.csproj", "{E698ECC6-F1F8-424F-8286-2C8B87DEB696}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
