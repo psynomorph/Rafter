@@ -8,7 +8,7 @@ public delegate void SetResponseDelegate<TResponse>(TResponse response) where TR
 
 public interface IRaftMessageListener
 {
-    Task OnVoteMessageReceivedAsync(
+    Task OnVoteRequestReceivedAsync(
         VoteRequest message,
         SetResponseDelegate<VoteResponse> setResponse,
         CancellationToken cancellationToken);
@@ -18,7 +18,7 @@ public interface IRaftMessageListener
         SetResponseDelegate<AppendEntriesResponse> setResponse,
         CancellationToken cancellationToken);
 
-    Task<AppendLogResponse> OnAppendLogMessageReceivedAsync(
+    Task OnAppendLogMessageReceivedAsync(
         AppendLogRequest message,
         SetResponseDelegate<AppendLogResponse> setResponse,
         CancellationToken cancellationToken);

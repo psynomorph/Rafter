@@ -8,8 +8,8 @@ namespace Rafter.Abstract;
 
 public interface IRaftTransport
 {
-    Task<Result<VoteResponse, Exception>> SendVoteMessageAsync(PeerInfo peer, VoteRequest message, CancellationToken cancellationToken);
-    Task<Result<AppendEntriesResponse, Exception>> SendAppendEntriesMessageAsync(PeerInfo peer, AppendEntriesResponse message, CancellationToken cancellationToken);
+    Task<Result<VoteResponse, VoteError>> SendVoteMessageAsync(PeerInfo peer, VoteRequest message, CancellationToken cancellationToken);
+    Task<Result<AppendEntriesResponse, AppendEntriesError>> SendAppendEntriesMessageAsync(PeerInfo peer, AppendEntriesRequest message, CancellationToken cancellationToken);
     Task<Result<AppendLogResponse, Exception>> SendAppendLogMessageAsync(PeerInfo peer, AppendLogRequest message, CancellationToken cancellationToken);
 
     IDisposable AddListener(IRaftMessageListener raftListener);

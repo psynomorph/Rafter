@@ -7,6 +7,6 @@ public sealed record AppendEntriesRequest(
     Term Term,
     PeerId PeerId,
     LogMeta PrevLogMeta,
-    LogIndex LeaderCommit,
+    LogIndex CommitedIndex,
     IReadOnlyCollection<LogEntry> Entries) : IRaftMessage;
         

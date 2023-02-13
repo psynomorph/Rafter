@@ -7,4 +7,4 @@ public sealed record AppendEntriesResponse(
     PeerId PeerId,
     bool Success,
     LogIndex MatchIndex,
-    PeerId? CurrentLeaderId = null) : IRaftMessage;
+    PeerId? CurrentLeaderId) : IRaftMessage;

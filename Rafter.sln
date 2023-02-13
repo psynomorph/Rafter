@@ -3,7 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rafter", "Rafter\Rafter.csproj", "{280ADA31-7927-430C-8C2E-9C7AF0D21721}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rafter", "src\Rafter\Rafter.csproj", "{280ADA31-7927-430C-8C2E-9C7AF0D21721}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5E5D3AC0-D0B5-463E-83DB-C956CFB07AC0}"
+EndProject
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

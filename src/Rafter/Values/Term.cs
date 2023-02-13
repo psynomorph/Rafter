@@ -19,6 +19,8 @@ public readonly struct Term : IEquatable<Term>, IComparable<Term>
     public override string ToString() => Value.ToString();
     public Term Next() => new(Value + 1);
 
+    public static Term Zero { get; } = 0;
+
 
     public static implicit operator Term(long value) => new Term(value);
     public static explicit operator long(Term term) => term.Value;

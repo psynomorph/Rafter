@@ -15,7 +15,7 @@ public readonly struct PeerId : IEquatable<PeerId>, IComparable<PeerId>
     public int CompareTo(PeerId other) => Comparer<long>.Default.Compare(Value, other.Value);
     public bool Equals(PeerId other) => Value == other.Value;
 
-    public override bool Equals(object? obj) => obj is LogIndex logIndex && Equals(logIndex);
+    public override bool Equals(object? obj) => obj is PeerId logIndex && Equals(logIndex);
 
     public override int GetHashCode() => HashCode.Combine(Value);
 

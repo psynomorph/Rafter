@@ -32,6 +32,8 @@ public readonly struct LogIndex : IEquatable<LogIndex>, IComparable<LogIndex>
     /// </summary>
     public LogIndex Next() => new(Value + 1);
 
+    public static LogIndex Zero => new LogIndex(0);
+
 
     public static implicit operator LogIndex(long value) => new LogIndex(value);
     public static explicit operator long(LogIndex term) => term.Value;

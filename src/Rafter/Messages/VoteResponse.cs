@@ -6,4 +6,5 @@ public sealed record VoteResponse(
     Term Term,
     PeerId PeerId,
     bool VoteGranted,
-    PeerId? CurrentLeaderId = null) : IRaftMessage;
+    LogIndex LogIndex,
+    PeerId? CurrentLeaderId) : IRaftMessage;
