@@ -7,6 +7,7 @@ using Rafter.Impl.RaftStrategies;
 using Rafter.Messages;
 using Rafter.Options;
 using Rafter.UnitTests.Extensions;
+using Rafter.UnitTests.Mocks;
 
 namespace Rafter.UnitTests;
 
@@ -37,7 +38,7 @@ public class CandidateStrategyTests
             (2, new VoteResponse(term.Next(), 2, true, entries[^1].Meta.LastLogIndex, 1)),
             (3, new VoteResponse(term.Next(), 3, true, entries[^1].Meta.LastLogIndex, 1)));
 
-        var state = new RaftSmState(peers[0].PeerId, term, PeerRole.Candidate);
+        var state = new RaftSmState(new MockTimeProvider(), peers[0].PeerId, term, PeerRole.Candidate);
         var storage = new PeersStorage();
         storage.UpdatePeers(peers);
         storage.SetCurrentPeerId(peers[0].PeerId);
@@ -85,7 +86,7 @@ public class CandidateStrategyTests
             (3, new VoteResponse(term.Next(), 3, true, entries[^1].Meta.LastLogIndex, 1)),
             (4, new VoteResponse(term.Next(), 3, false, entries[^1].Meta.LastLogIndex, 1)));
 
-        var state = new RaftSmState(peers[0].PeerId, term, PeerRole.Candidate);
+        var state = new RaftSmState(new MockTimeProvider(), peers[0].PeerId, term, PeerRole.Candidate);
         var storage = new PeersStorage();
         storage.UpdatePeers(peers);
         storage.SetCurrentPeerId(peers[0].PeerId);
@@ -141,7 +142,7 @@ public class CandidateStrategyTests
             }
         };
 
-        var state = new RaftSmState(peers[0].PeerId, term, PeerRole.Candidate);
+        var state = new RaftSmState(new MockTimeProvider(), peers[0].PeerId, term, PeerRole.Candidate);
         var storage = new PeersStorage();
         storage.UpdatePeers(peers);
         storage.SetCurrentPeerId(peers[0].PeerId);
@@ -191,7 +192,7 @@ public class CandidateStrategyTests
             (2, new VoteResponse(term.Next(), 2, false, entries[^1].Meta.LastLogIndex, 1)),
             (3, new VoteResponse(term.Next(), 3, false, entries[^1].Meta.LastLogIndex, 1)));
 
-        var state = new RaftSmState(peers[0].PeerId, term, PeerRole.Candidate);
+        var state = new RaftSmState(new MockTimeProvider(), peers[0].PeerId, term, PeerRole.Candidate);
         var storage = new PeersStorage();
         storage.UpdatePeers(peers);
         storage.SetCurrentPeerId(peers[0].PeerId);
@@ -238,7 +239,7 @@ public class CandidateStrategyTests
             (3, new VoteResponse(term.Next(), 3, false, entries[^1].Meta.LastLogIndex, 2)),
             (4, new VoteResponse(term.Next(), 4, false, entries[^1].Meta.LastLogIndex, 2)));
 
-        var state = new RaftSmState(peers[0].PeerId, term, PeerRole.Candidate);
+        var state = new RaftSmState(new MockTimeProvider(), peers[0].PeerId, term, PeerRole.Candidate);
         var storage = new PeersStorage();
         storage.UpdatePeers(peers);
         storage.SetCurrentPeerId(peers[0].PeerId);
@@ -292,7 +293,7 @@ public class CandidateStrategyTests
 # endif
         };
 
-        var state = new RaftSmState(peers[0].PeerId, term, PeerRole.Candidate);
+        var state = new RaftSmState(new MockTimeProvider(), peers[0].PeerId, term, PeerRole.Candidate);
         var storage = new PeersStorage();
         storage.UpdatePeers(peers);
         storage.SetCurrentPeerId(peers[0].PeerId);
@@ -346,7 +347,7 @@ public class CandidateStrategyTests
             (3, new VoteResponse(term.Next(), 2, true, entries[^1].Meta.LastLogIndex, 1)),
             (4, new VoteResponse(term.Next().Next(), 3, false, entries[^1].Meta.LastLogIndex, 1)));
 
-        var state = new RaftSmState(peers[0].PeerId, term, PeerRole.Candidate);
+        var state = new RaftSmState(new MockTimeProvider(), peers[0].PeerId, term, PeerRole.Candidate);
         var storage = new PeersStorage();
         storage.UpdatePeers(peers);
         storage.SetCurrentPeerId(peers[0].PeerId);
@@ -396,7 +397,7 @@ public class CandidateStrategyTests
             Delay = TimeSpan.FromSeconds(0.2)
         };
 
-        var state = new RaftSmState(peers[0].PeerId, term, PeerRole.Candidate);
+        var state = new RaftSmState(new MockTimeProvider(), peers[0].PeerId, term, PeerRole.Candidate);
         var storage = new PeersStorage();
         storage.UpdatePeers(peers);
         storage.SetCurrentPeerId(peers[0].PeerId);

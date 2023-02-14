@@ -1,18 +1,27 @@
 ﻿using Rafter.Values;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Rafter.Impl;
 
 internal class RaftSmState
 {
+    /// <summary>
+    /// Use stopwatch to get relative continous time
+    /// </summary>
+    private readonly IRaftTimeProvider _timeProvider;
+
     public PeerId CurrentPeerId { get; }
     public Term CurrentTerm { get; private set; } = Term.Zero;
     public PeerId? CurrentLeaderId { get; private set; }
     public PeerRole CurrentRole { get; private set; }
     public PeerId? VotedFor { get; private set; }
+    public TimeSpan LastHeartBeat { get; private set; } = TimeSpan.Zero;
+    public TimeSpan CurrentTime => _timeProvider.CurrentTime;
 
-    public RaftSmState(PeerId currentPeerId, Term term, PeerRole peerRole)
+    public RaftSmState(IRaftTimeProvider timeProvider, PeerId currentPeerId, Term term, PeerRole peerRole)
     {
+        _timeProvider = timeProvider;
         CurrentPeerId = currentPeerId;
         CurrentTerm = term;
         CurrentRole = peerRole;
@@ -47,7 +56,7 @@ internal class RaftSmState
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WinElection()
+    public void BecomeLeader()
     {
         CurrentLeaderId = CurrentPeerId;
         CurrentRole = PeerRole.Leader;
@@ -81,6 +90,18 @@ internal class RaftSmState
     public bool CheckCurrentState(Term term, PeerRole role)
     {
         return CurrentTerm == term && CurrentRole == role;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void UpdateHeartBeat()
+    {
+        LastHeartBeat = CurrentTime;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void BecomeCandidate()
+    {
+        CurrentRole = PeerRole.Candidate;
     }
 
     public readonly record struct Snapshot(

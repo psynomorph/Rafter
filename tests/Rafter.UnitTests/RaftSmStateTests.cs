@@ -1,4 +1,6 @@
 ﻿using Rafter.Impl;
+using Rafter.UnitTests.Mocks;
+using Rafter.Values;
 
 namespace Rafter.UnitTests;
 
@@ -10,6 +12,7 @@ public class RaftSmStateTests
     {
         // Arrange && Act
         var state = new RaftSmState(
+            new MockTimeProvider(),
             new PeerId(10),
             new Term(2),
             PeerRole.Candidate);
@@ -80,13 +83,13 @@ public class RaftSmStateTests
     }
 
     [Test]
-    public void Win_election_success()
+    public void Become_leader_success()
     {
         // Arrange
         var state = CreateState(peerRole: PeerRole.Candidate);
 
         // Act
-        state.WinElection();
+        state.BecomeLeader();
 
         // Assert
         state.CurrentLeaderId.Should().Be(state.CurrentPeerId);
@@ -196,11 +199,46 @@ public class RaftSmStateTests
         nonMatched2.Should().BeFalse();
     }
 
+    [Test]
+    public void Update_last_heartbeat_time_success()
+    {
+        // Arrange
+        var timeProvider = new MockTimeProvider();
+        var state = new RaftSmState(
+            timeProvider,
+            new PeerId(10),
+            new Term(10),
+            PeerRole.Follower);
+
+        timeProvider.SetTimeSeq(TimeSpan.FromSeconds(12));
+
+        // Act
+        
+        state.UpdateHeartBeat();
+
+        // Assert
+        state.LastHeartBeat.Should().Be(TimeSpan.FromSeconds(12));
+    }
+
+    [Test]
+    public void Become_candidate_success()
+    {
+        // Arrange
+        var state = CreateState(peerRole: PeerRole.Follower);
+
+        // Act
+        state.BecomeCandidate();
+
+        // Assert
+        state.CurrentRole.Should().Be(PeerRole.Candidate);
+    }
+
     private static RaftSmState CreateState(
         Term? term = null,
         PeerRole peerRole = PeerRole.Candidate)
     {
         return new RaftSmState(
+            new MockTimeProvider(),
             new PeerId(10),
             term ?? new Term(10),
             peerRole);

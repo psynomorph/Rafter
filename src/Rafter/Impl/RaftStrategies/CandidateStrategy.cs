@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Rafter.Impl.RaftStrategies;
 
-internal class CandidateStrategy : IRaftStrategy
+internal sealed class CandidateStrategy : IRaftStrategy
 {
     private readonly IRaftLogStorage _logStorage;
     private readonly IRaftTransport _raftTransport;
@@ -155,7 +155,7 @@ internal class CandidateStrategy : IRaftStrategy
             return;
         }
 
-        _state.WinElection();
+        _state.BecomeLeader();
 
         foreach (var peer in _peersStorage.GetAllPeers())
         {
