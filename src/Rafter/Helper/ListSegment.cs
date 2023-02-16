@@ -88,7 +88,6 @@ public readonly struct ListSegment<T> : IReadOnlyList<T>
     private class Enumerator : IEnumerator<T>
     {
         private readonly ListSegment<T> _segment;
-
         private int _currentIndex;
 
         public Enumerator(ListSegment<T> segment)
@@ -106,7 +105,7 @@ public readonly struct ListSegment<T> : IReadOnlyList<T>
             _currentIndex++;
             if (_currentIndex < _segment.Count) 
             {
-                Current = _segment[_segment._offset + _currentIndex];
+                Current = _segment[_currentIndex];
                 return true;
             }
             return false;
