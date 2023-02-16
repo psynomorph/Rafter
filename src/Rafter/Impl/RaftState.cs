@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Rafter.Impl;
 
-internal class RaftSmState
+internal class RaftState
 {
     /// <summary>
     /// Use stopwatch to get relative continous time
@@ -19,7 +19,11 @@ internal class RaftSmState
     public TimeSpan LastHeartBeat { get; private set; } = TimeSpan.Zero;
     public TimeSpan CurrentTime => _timeProvider.CurrentTime;
 
-    public RaftSmState(IRaftTimeProvider timeProvider, PeerId currentPeerId, Term term, PeerRole peerRole)
+    public bool IsLeader => CurrentRole == PeerRole.Leader;
+    public bool IsFollower => CurrentRole == PeerRole.Follower;
+    public bool IsCandidate => CurrentRole == PeerRole.Candidate;
+
+    public RaftState(IRaftTimeProvider timeProvider, PeerId currentPeerId, Term term, PeerRole peerRole)
     {
         _timeProvider = timeProvider;
         CurrentPeerId = currentPeerId;

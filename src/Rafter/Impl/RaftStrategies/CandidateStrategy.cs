@@ -20,15 +20,11 @@ internal sealed class CandidateStrategy : IRaftStrategy
     private readonly PeersStorage _peersStorage;
     private readonly ILogger _logger;
     private readonly IOptions<RaftOptions> _options;
-    private readonly RaftSmState _state;
+    private readonly RaftState _state;
 
     public CandidateStrategy(
-        IRaftLogStorage logStorage,
-        IRaftTransport raftTransport,
-        PeersStorage peersStorage,
-        ILogger logger,
-        IOptions<RaftOptions> options,
-        RaftSmState state)
+        IRaftLogStorage logStorage, IRaftTransport raftTransport, PeersStorage peersStorage,
+        ILogger logger, IOptions<RaftOptions> options, RaftState state)
     {
         _logStorage = logStorage;
         _raftTransport = raftTransport;

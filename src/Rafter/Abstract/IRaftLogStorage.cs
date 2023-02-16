@@ -9,7 +9,7 @@ namespace Rafter.Abstract;
 public interface IRaftLogStorage
 {
     Task<LogMeta> GetLastEntryMetaAsync(CancellationToken cancellationToken);
-    Task<LogEntry[]> GetEntriesAsync(LogIndex from, CancellationToken cancellationToken);
+    Task<IReadOnlyList<LogEntry>> GetEntriesAsync(LogIndex from, CancellationToken cancellationToken);
     Task AppendAsync(IEnumerable<LogEntry> entries, CancellationToken cancellationToken);
     Task<LogEntry> GetEntryByIndex(LogIndex index, CancellationToken cancellationToken);
     Task<LogEntry> AddNewEntry(Span<byte> payload, CancellationToken cancellationToken);

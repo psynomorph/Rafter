@@ -59,10 +59,10 @@ public class FollowerStrategyTests
         state.CurrentRole.Should().Be(PeerRole.Leader);
     }
 
-    private static (MockTimeProvider, RaftSmState, FollowerStrategy) CreateStrategy(TimeSpan heartBeatTimeout)
+    private static (MockTimeProvider, RaftState, FollowerStrategy) CreateStrategy(TimeSpan heartBeatTimeout)
     {
         var timeProvider = new MockTimeProvider();
-        var state = new RaftSmState(timeProvider, new PeerId(1), new Term(1), PeerRole.Follower);
+        var state = new RaftState(timeProvider, new PeerId(1), new Term(1), PeerRole.Follower);
         var strategy = new FollowerStrategy(
             state: state,
             options: MockOptions(new RaftOptions()

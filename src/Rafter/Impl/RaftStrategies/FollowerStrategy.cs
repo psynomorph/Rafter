@@ -9,11 +9,11 @@ namespace Rafter.Impl.RaftStrategies;
 
 internal sealed class FollowerStrategy : IRaftStrategy
 {
-    private readonly RaftSmState _state;
+    private readonly RaftState _state;
     private readonly IOptions<RaftOptions> _options;
     private readonly ILogger _logger;
 
-    public FollowerStrategy(RaftSmState state, IOptions<RaftOptions> options, ILogger logger)
+    public FollowerStrategy(RaftState state, IOptions<RaftOptions> options, ILogger logger)
     {
         _state = state;
         _options = options;
@@ -24,12 +24,12 @@ internal sealed class FollowerStrategy : IRaftStrategy
     {
         var delay = _options.Value.FollowerHeartBeatInterval;
 
-        while (_state.CurrentRole == PeerRole.Follower && !cancellationToken.IsCancellationRequested)
+        while (_state.IsFollower && !cancellationToken.IsCancellationRequested)
         {
             await Task.Delay(delay, cancellationToken);
 
             delay = _state.LastHeartBeat + _options.Value.FollowerHeartBeatInterval - _state.CurrentTime;
-            if (delay <= TimeSpan.Zero && _state.CurrentRole == PeerRole.Follower)
+            if (delay <= TimeSpan.Zero && _state.IsFollower)
             {
                 _state.BecomeCandidate();
                 return;

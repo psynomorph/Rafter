@@ -11,7 +11,7 @@ public class RaftSmStateTests
     public void Create_state_success()
     {
         // Arrange && Act
-        var state = new RaftSmState(
+        var state = new RaftState(
             new MockTimeProvider(),
             new PeerId(10),
             new Term(2),
@@ -189,9 +189,9 @@ public class RaftSmStateTests
         var state = CreateState(term: term, peerRole: role);
 
         // Act
-        var matched = state.CheckCurrentState(new RaftSmState.Snapshot(term, role, null));
-        var nonMatched1 = state.CheckCurrentState(new RaftSmState.Snapshot(term.Next(), role, null));
-        var nonMatched2 = state.CheckCurrentState(new RaftSmState.Snapshot(term, PeerRole.Candidate, null));
+        var matched = state.CheckCurrentState(new RaftState.Snapshot(term, role, null));
+        var nonMatched1 = state.CheckCurrentState(new RaftState.Snapshot(term.Next(), role, null));
+        var nonMatched2 = state.CheckCurrentState(new RaftState.Snapshot(term, PeerRole.Candidate, null));
 
         // Assert
         matched.Should().BeTrue();
@@ -204,7 +204,7 @@ public class RaftSmStateTests
     {
         // Arrange
         var timeProvider = new MockTimeProvider();
-        var state = new RaftSmState(
+        var state = new RaftState(
             timeProvider,
             new PeerId(10),
             new Term(10),
@@ -233,11 +233,11 @@ public class RaftSmStateTests
         state.CurrentRole.Should().Be(PeerRole.Candidate);
     }
 
-    private static RaftSmState CreateState(
+    private static RaftState CreateState(
         Term? term = null,
         PeerRole peerRole = PeerRole.Candidate)
     {
-        return new RaftSmState(
+        return new RaftState(
             new MockTimeProvider(),
             new PeerId(10),
             term ?? new Term(10),
